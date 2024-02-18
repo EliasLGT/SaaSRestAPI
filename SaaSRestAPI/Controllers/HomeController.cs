@@ -193,7 +193,8 @@ namespace SaaSRestAPI.Controllers
 
             if (id != todo.TodoId)
             {
-                return new JsonResult(BadRequest("The id you provide in the Url doesn't much the one in the request body!"));
+                todo.TodoId = id;
+                //return new JsonResult(BadRequest("The id you provide in the Url doesn't much the one in the request body!"));
             }
 
             var todoInDb = _context.Todos.FirstOrDefault(m => m.TodoId == id);
@@ -207,6 +208,7 @@ namespace SaaSRestAPI.Controllers
             {
                 return new JsonResult(BadRequest("Field 'createdBy' of this todo in the database does not contain your Id!"));
             }
+            todo.CreatedBy = user.UserId;
 
             _context.Remove(todoInDb);
             _context.Add(todo);
@@ -303,7 +305,8 @@ namespace SaaSRestAPI.Controllers
 
             if (item.BelongsTo != id)
             {
-                return new JsonResult(BadRequest("The 'belongsTo' field doesn't match the id in the Url!"));
+                item.BelongsTo = id;
+                //return new JsonResult(BadRequest("The 'belongsTo' field doesn't match the id in the Url!"));
             }
 
             _context.Add(item);
@@ -327,7 +330,8 @@ namespace SaaSRestAPI.Controllers
 
             if (iid != item.ItemId)
             {
-                return new JsonResult(BadRequest("The iid field in the Url doesn't much the one you provide in the itemId field in the request body!"));
+                item.ItemId = iid;
+                //return new JsonResult(BadRequest("The iid field in the Url doesn't much the one you provide in the itemId field in the request body!"));
             }
 
             var todoInDb = _context.Todos.Include(r => r.Items).FirstOrDefault(m => m.TodoId == id);
@@ -337,10 +341,11 @@ namespace SaaSRestAPI.Controllers
                 return new JsonResult(NotFound());
             }
 
-            if(todoInDb.CreatedBy != user.UserId || item.BelongsTo != id)
+            if(todoInDb.CreatedBy != user.UserId)// || item.BelongsTo != id)
             {
-                return new JsonResult(BadRequest("Field 'createdBy' of this todo in the database does not contain your Id or the BelongsTo field doesn't much the todo's id you provide in the Url!"));
+                return new JsonResult(BadRequest("Field 'createdBy' of this todo in the database does not contain your Id!"));//or the BelongsTo field doesn't much the todo's id you provide in the Url!"));
             }
+            item.BelongsTo = id;
 
             var itemInDb = todoInDb.Items.FirstOrDefault(m => m.ItemId == iid);
             if (itemInDb == null)
