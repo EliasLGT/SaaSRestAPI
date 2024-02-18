@@ -139,7 +139,8 @@ namespace SaaSRestAPI.Controllers
 
             if(todo.CreatedBy != user.UserId)
             {
-                return new JsonResult(BadRequest("Field 'createdBy' does not contain your Id!"));
+                todo.CreatedBy = user.UserId;
+                //return new JsonResult(BadRequest("Field 'createdBy' does not contain your Id!"));
             }
 
             _context.Todos.Add( todo );
